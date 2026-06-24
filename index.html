@@ -512,7 +512,9 @@ async function chargerPromos() {
 
   try {
     // Contournement CORS via un proxy public (pour GitHub Pages)
-    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(CONFIG.sheetURL)}`;
+    // Paramètre anti-cache : force le navigateur à recharger les données à chaque visite
+    const urlAntiCache = CONFIG.sheetURL + "&t=" + Date.now();
+    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(urlAntiCache)}`;
     const response = await fetch(proxyURL);
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);

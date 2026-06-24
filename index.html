@@ -428,34 +428,52 @@ function formatPrix(val) {
 }
 
 // ── Conversion lien Google Drive → lien direct ──
-// Recherche photo via EAN (Open Food Facts / Open Beauty Facts / Open Products Facts)
-async function photoDepuisEAN(ean) {
-  if (!ean || ean.trim() === "") return null;
-  const bases = [
-    `https://world.openfoodfacts.org/api/v0/product/${ean.trim()}.json`,
-    `https://world.openbeautyfacts.org/api/v0/product/${ean.trim()}.json`,
-    `https://world.openproductsfacts.org/api/v0/product/${ean.trim()}.json`,
-  ];
-  for (const url of bases) {
-    try {
-      const r = await fetch(url);
-      if (!r.ok) continue;
+// Recherche photo via le NOM du produit
+// Strategie : Open Food Facts par nom, puis icone generique par categorie
+async function photoDepuisNom(nom, categorie) {
+  if (!nom || nom.trim() === "") return null;
+
+  // Tentative 1 : Open Food Facts recherche par nom
+  try {
+    const query = encodeURIComponent(nom.trim());
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=5`;
+    const r = await fetch(url);
+    if (r.ok) {
       const data = await r.json();
-      if (data.status === 1 && data.product) {
-        const img = data.product.image_front_url || data.product.image_url;
-        if (img) return img;
+      if (data.products && data.products.length > 0) {
+        for (const p of data.products) {
+          const img = p.image_front_url || p.image_url;
+          if (img) return img;
+        }
       }
-    } catch (e) { /* essai suivant */ }
-  }
+    }
+  } catch (e) { /* essai suivant */ }
+
+  // Tentative 2 : Open Beauty Facts recherche par nom
+  try {
+    const query = encodeURIComponent(nom.trim());
+    const url = `https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=5`;
+    const r = await fetch(url);
+    if (r.ok) {
+      const data = await r.json();
+      if (data.products && data.products.length > 0) {
+        for (const p of data.products) {
+          const img = p.image_front_url || p.image_url;
+          if (img) return img;
+        }
+      }
+    }
+  } catch (e) { /* echec silencieux */ }
+
   return null;
 }
 
-// Construction d'une carte (async pour charger la photo EAN)
+// Construction d'une carte (async pour charger la photo)
 async function construireCarteHTML(promo) {
   const remise = calcRemise(promo.prix_promo, promo.prix_ancien);
 
-  // Photo automatique via code EAN
-  let lienPhoto = promo.ean ? await photoDepuisEAN(promo.ean) : null;
+  // Photo automatique via le nom du produit
+  let lienPhoto = await photoDepuisNom(promo.nom, promo.categorie);
 
   // Bloc image
   let imgHTML;

@@ -428,19 +428,34 @@ function formatPrix(val) {
 }
 
 // ── Conversion lien Google Drive → lien direct ──
-function driveLienDirect(url) {
-  if (!url) return null;
-  // Format : https://drive.google.com/file/d/FILE_ID/view?...
-  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
-  // Format déjà direct ou autre URL
-  return url;
+// Recherche photo via EAN (Open Food Facts / Open Beauty Facts / Open Products Facts)
+async function photoDepuisEAN(ean) {
+  if (!ean || ean.trim() === "") return null;
+  const bases = [
+    `https://world.openfoodfacts.org/api/v0/product/${ean.trim()}.json`,
+    `https://world.openbeautyfacts.org/api/v0/product/${ean.trim()}.json`,
+    `https://world.openproductsfacts.org/api/v0/product/${ean.trim()}.json`,
+  ];
+  for (const url of bases) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (data.status === 1 && data.product) {
+        const img = data.product.image_front_url || data.product.image_url;
+        if (img) return img;
+      }
+    } catch (e) { /* essai suivant */ }
+  }
+  return null;
 }
 
-// ── Construction d'une carte ──
-function construireCarteHTML(promo) {
+// Construction d'une carte (async pour charger la photo EAN)
+async function construireCarteHTML(promo) {
   const remise = calcRemise(promo.prix_promo, promo.prix_ancien);
-  const lienPhoto = driveLienDirect(promo.photo);
+
+  // Photo automatique via code EAN
+  let lienPhoto = promo.ean ? await photoDepuisEAN(promo.ean) : null;
 
   // Bloc image
   let imgHTML;
@@ -470,7 +485,7 @@ function construireCarteHTML(promo) {
             <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
             <polyline points="21 15 16 10 5 21"/>
           </svg>
-          <span>Photo à venir</span>
+          <span>Photo a venir</span>
         </div>
         ${remise ? `<span class="badge-remise">-${remise}%</span>` : ""}
       </div>`;
@@ -506,20 +521,28 @@ function construireCarteHTML(promo) {
     </div>`;
 }
 
-// ── Chargement & affichage ──
+// Double proxy avec fallback automatique
+async function fetchAvecFallback(url) {
+  const urlAntiCache = url + "&t=" + Date.now();
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(urlAntiCache)}`,
+    `https://corsproxy.io/?${encodeURIComponent(urlAntiCache)}`,
+  ];
+  for (const proxy of proxies) {
+    try {
+      const r = await fetch(proxy);
+      if (r.ok) return await r.text();
+    } catch (e) { /* essai suivant */ }
+  }
+  throw new Error("Tous les proxies ont echoue");
+}
+
+// Chargement & affichage
 async function chargerPromos() {
   const grid = document.getElementById("promo-grid");
 
   try {
-    // Contournement CORS via un proxy public (pour GitHub Pages)
-    // Paramètre anti-cache : force le navigateur à recharger les données à chaque visite
-    const urlAntiCache = CONFIG.sheetURL + "&t=" + Date.now();
-    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(urlAntiCache)}`;
-    const response = await fetch(proxyURL);
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const text = await response.text();
+    const text = await fetchAvecFallback(CONFIG.sheetURL);
     const promos = parseCSV(text);
 
     if (promos.length === 0) {
@@ -531,7 +554,8 @@ async function chargerPromos() {
       return;
     }
 
-    grid.innerHTML = promos.map(construireCarteHTML).join("");
+    const cartes = await Promise.all(promos.map(p => construireCarteHTML(p)));
+    grid.innerHTML = cartes.join("");
 
   } catch (err) {
     console.error("Erreur chargement promos :", err);

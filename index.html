@@ -5,23 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Promotions — Pharmacie</title>
   <style>
-    /* ─── Reset & Base ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --vert:        #1a8a5a;
-      --vert-fonce:  #0f5e3a;
-      --vert-clair:  #e8f5ee;
-      --vert-mid:    #c5e4d3;
-      --blanc:       #ffffff;
-      --gris-fond:   #f4f8f5;
-      --gris-bord:   #d8ece2;
-      --texte:       #1a2b22;
-      --texte-2:     #5a7367;
-      --rouge-promo: #e03e3e;
+      --vert:       #1a8a5a;
+      --vert-fonce: #0f5e3a;
+      --vert-clair: #e8f5ee;
+      --vert-mid:   #c5e4d3;
+      --blanc:      #ffffff;
+      --gris-fond:  #f4f8f5;
+      --gris-bord:  #d8ece2;
+      --texte:      #1a2b22;
+      --texte-2:    #5a7367;
+      --rouge:      #e03e3e;
     }
-
-    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -30,516 +27,374 @@
       min-height: 100vh;
     }
 
-    /* ─── Header ─── */
+    /* ── Header ── */
     header {
       background: linear-gradient(145deg, var(--vert-fonce) 0%, var(--vert) 100%);
-      color: var(--blanc);
-      padding: 2rem 1.25rem 1.75rem;
+      color: white;
+      padding: 1.75rem 1.25rem 1.5rem;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-
     header::before {
-      content: '';
-      position: absolute;
-      top: -40px; right: -40px;
-      width: 180px; height: 180px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 50%;
+      content:''; position:absolute; top:-40px; right:-40px;
+      width:180px; height:180px;
+      background:rgba(255,255,255,0.06); border-radius:50%;
     }
     header::after {
-      content: '';
-      position: absolute;
-      bottom: -50px; left: -30px;
-      width: 140px; height: 140px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 50%;
+      content:''; position:absolute; bottom:-50px; left:-30px;
+      width:140px; height:140px;
+      background:rgba(255,255,255,0.04); border-radius:50%;
     }
-
-    .header-inner { position: relative; z-index: 1; }
-
+    .header-inner { position:relative; z-index:1; }
     .croix {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 52px; height: 52px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 14px;
-      margin-bottom: 12px;
-      font-size: 26px;
+      display:inline-flex; align-items:center; justify-content:center;
+      width:48px; height:48px;
+      background:rgba(255,255,255,0.15); border-radius:12px;
+      margin-bottom:10px; font-size:24px;
     }
-
-    header h1 {
-      font-size: clamp(20px, 5vw, 26px);
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      margin-bottom: 4px;
-    }
-
-    header .adresse {
-      font-size: 14px;
-      opacity: 0.8;
-      margin-bottom: 14px;
-    }
-
+    header h1 { font-size:clamp(18px,5vw,24px); font-weight:700; margin-bottom:4px; }
+    header .adresse { font-size:13px; opacity:0.8; margin-bottom:12px; }
     .badge-maj {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px;
-      padding: 5px 14px;
-      font-size: 12px;
-      font-weight: 500;
+      display:inline-flex; align-items:center; gap:5px;
+      background:rgba(255,255,255,0.15);
+      border:1px solid rgba(255,255,255,0.25);
+      border-radius:20px; padding:4px 12px; font-size:12px;
     }
-    .badge-maj::before { content: '🕐'; font-size: 12px; }
 
-    /* ─── Horaires ─── */
+    /* ── Fil d'ariane ── */
+    .breadcrumb {
+      display:none;
+      align-items:center; gap:8px;
+      padding:0.75rem 1rem;
+      background:white;
+      border-bottom:1px solid var(--gris-bord);
+      font-size:13px; color:var(--texte-2);
+    }
+    .breadcrumb.visible { display:flex; }
+    .breadcrumb .retour {
+      display:flex; align-items:center; gap:5px;
+      color:var(--vert); font-weight:600; cursor:pointer;
+      background:none; border:none; font-size:13px; padding:0;
+    }
+    .breadcrumb .retour:hover { text-decoration:underline; }
+    .breadcrumb .sep { opacity:0.4; }
+
+    /* ── Horaires ── */
     .horaires-strip {
-      background: var(--vert-fonce);
-      color: rgba(255,255,255,0.85);
-      text-align: center;
-      font-size: 12.5px;
-      padding: 8px 1rem;
-      letter-spacing: 0.02em;
+      background:var(--vert-fonce);
+      color:rgba(255,255,255,0.85);
+      text-align:center; font-size:12px;
+      padding:7px 1rem;
     }
 
-    /* ─── Contenu principal ─── */
-    main {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem 3rem;
-    }
+    main { max-width:700px; margin:0 auto; padding:1.25rem 1rem 3rem; }
 
-    /* ─── Titre section ─── */
+    /* ── Label section ── */
     .section-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--vert);
-      margin-bottom: 1rem;
+      display:flex; align-items:center; gap:10px;
+      font-size:12px; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.1em;
+      color:var(--vert); margin-bottom:1rem;
     }
     .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--vert-mid);
+      content:''; flex:1; height:1px; background:var(--vert-mid);
     }
 
-    /* ─── Grille de cartes ─── */
-    .promo-grid {
-      display: grid;
+    /* ════════════════════════════
+       PAGE LABORATOIRES
+    ════════════════════════════ */
+    #page-labos { display:block; }
+    #page-promos { display:none; }
+
+    .labo-grid {
+      display:grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap:12px;
+    }
+    @media(max-width:400px) { .labo-grid { grid-template-columns:1fr; } }
+
+    /* Palette de couleurs automatique par labo */
+    .labo-card {
+      border-radius:16px;
+      padding:1.25rem 1rem;
+      cursor:pointer;
+      display:flex; flex-direction:column;
+      align-items:flex-start; gap:10px;
+      border:none;
+      transition:transform 0.18s, box-shadow 0.18s;
+      text-align:left;
+      position:relative;
+      overflow:hidden;
+      min-height:130px;
+    }
+    .labo-card:hover {
+      transform:translateY(-3px);
+      box-shadow:0 10px 28px rgba(0,0,0,0.15);
+    }
+    .labo-card::after {
+      content:'›';
+      position:absolute; bottom:12px; right:14px;
+      font-size:22px; opacity:0.4; font-weight:300;
+    }
+    .labo-icon {
+      width:44px; height:44px;
+      background:rgba(255,255,255,0.25);
+      border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:22px;
+    }
+    .labo-nom {
+      font-size:16px; font-weight:700;
+      color:white; line-height:1.2;
+    }
+    .labo-count {
+      font-size:12px;
+      background:rgba(255,255,255,0.25);
+      color:white;
+      padding:3px 10px; border-radius:20px;
+      font-weight:600;
     }
 
-    @media (max-width: 420px) {
-      .promo-grid { grid-template-columns: 1fr; }
+    /* ════════════════════════════
+       PAGE PROMOS
+    ════════════════════════════ */
+    .promo-grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
     }
+    @media(max-width:400px){ .promo-grid{ grid-template-columns:1fr; } }
 
-    /* ─── Carte promo ─── */
     .card {
-      background: var(--blanc);
-      border: 1px solid var(--gris-bord);
-      border-radius: 14px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      background:white;
+      border:1px solid var(--gris-bord);
+      border-radius:14px;
+      overflow:hidden;
+      display:flex; flex-direction:column;
+      transition:transform 0.18s, box-shadow 0.18s;
     }
     .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(26,138,90,0.12);
+      transform:translateY(-3px);
+      box-shadow:0 8px 24px rgba(26,138,90,0.12);
     }
-
-    /* Image produit */
     .card-img {
-      width: 100%;
-      height: 130px;
-      object-fit: cover;
-      background: var(--vert-clair);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+      width:100%; height:130px;
+      background:var(--vert-clair);
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
     }
     .card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+      width:100%; height:100%; object-fit:cover; display:block;
     }
     .card-img-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: var(--vert);
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:6px; color:var(--vert);
     }
-    .card-img-placeholder span { font-size: 11px; opacity: 0.6; }
-    .card-img-placeholder svg { opacity: 0.35; }
-
-    /* Badge réduction */
+    .card-img-placeholder span { font-size:11px; opacity:0.6; }
     .badge-remise {
-      position: absolute;
-      top: 9px;
-      right: 9px;
-      background: var(--rouge-promo);
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 20px;
-      letter-spacing: 0.02em;
-      box-shadow: 0 2px 6px rgba(224,62,62,0.35);
+      position:absolute; top:9px; right:9px;
+      background:var(--rouge); color:white;
+      font-size:11px; font-weight:700;
+      padding:3px 9px; border-radius:20px;
+      box-shadow:0 2px 6px rgba(224,62,62,0.35);
     }
-
-    /* Corps de la carte */
     .card-body {
-      padding: 0.85rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      padding:0.85rem; flex:1;
+      display:flex; flex-direction:column; gap:4px;
     }
-
-    .card-cat {
-      font-size: 10.5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--vert);
-      background: var(--vert-clair);
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 20px;
-      align-self: flex-start;
-      margin-bottom: 2px;
+    .card-labo-badge {
+      font-size:10px; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.08em;
+      color:white;
+      display:inline-block;
+      padding:2px 8px; border-radius:20px;
+      align-self:flex-start; margin-bottom:2px;
     }
-
-    .card-nom {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--texte);
-      line-height: 1.3;
-    }
-
-    .card-desc {
-      font-size: 12px;
-      color: var(--texte-2);
-      line-height: 1.4;
-      flex: 1;
-    }
-
+    .card-nom { font-size:14px; font-weight:700; line-height:1.3; }
+    .card-desc { font-size:12px; color:var(--texte-2); line-height:1.4; flex:1; }
     .card-prix {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-top: 8px;
+      display:flex; align-items:flex-end;
+      justify-content:space-between; margin-top:8px;
     }
-
-    .prix-promo {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--vert);
-      line-height: 1;
-    }
-    .prix-ancien {
-      font-size: 11px;
-      color: var(--texte-2);
-      text-decoration: line-through;
-      margin-top: 2px;
-    }
-
+    .prix-promo { font-size:20px; font-weight:800; color:var(--vert); line-height:1; }
+    .prix-ancien { font-size:11px; color:var(--texte-2); text-decoration:line-through; margin-top:2px; }
     .card-expiry {
-      font-size: 11px;
-      color: var(--texte-2);
-      margin-top: 7px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      font-size:11px; color:var(--texte-2);
+      margin-top:7px; display:flex; align-items:center; gap:4px;
     }
-    .card-expiry::before { content: '📅'; font-size: 11px; }
+    .card-expiry::before { content:'📅'; font-size:11px; }
 
-    /* ─── États de chargement / erreur / vide ─── */
+    /* ── États ── */
     .etat {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--texte-2);
+      grid-column:1/-1; text-align:center;
+      padding:3rem 1rem; color:var(--texte-2);
     }
-    .etat .icon { font-size: 40px; margin-bottom: 10px; }
-    .etat p { font-size: 14px; }
-
+    .etat .icon { font-size:40px; margin-bottom:10px; }
     .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid var(--vert-mid);
-      border-top-color: var(--vert);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 14px;
+      width:36px; height:36px;
+      border:3px solid var(--vert-mid);
+      border-top-color:var(--vert);
+      border-radius:50%;
+      animation:spin 0.8s linear infinite;
+      margin:0 auto 14px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* ─── Footer ─── */
+    /* ── Footer ── */
     footer {
-      background: var(--blanc);
-      border-top: 1px solid var(--gris-bord);
-      text-align: center;
-      padding: 1.25rem 1rem;
-      font-size: 12px;
-      color: var(--texte-2);
-      line-height: 1.8;
+      background:white; border-top:1px solid var(--gris-bord);
+      text-align:center; padding:1.25rem 1rem;
+      font-size:12px; color:var(--texte-2); line-height:1.8;
     }
-    footer strong { color: var(--texte); }
-
-    /* ─── Mention légale ─── */
     .mention {
-      text-align: center;
-      font-size: 11px;
-      color: var(--texte-2);
-      opacity: 0.6;
-      padding: 0.75rem 1rem 1.5rem;
+      text-align:center; font-size:11px;
+      color:var(--texte-2); opacity:0.6;
+      padding:0.75rem 1rem 1.5rem;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
-      <div class="croix">✚</div>
-      <h1 id="nom-pharmacie">Pharmacie</h1>
-      <p class="adresse" id="adresse-pharmacie">Chargement…</p>
-      <span class="badge-maj" id="badge-date">Mise à jour en cours…</span>
-    </div>
-  </header>
-
-  <div class="horaires-strip" id="horaires-strip">
-    Lun – Sam &nbsp;|&nbsp; 8h30 – 19h30
+<header>
+  <div class="header-inner">
+    <div class="croix">✚</div>
+    <h1 id="nom-pharmacie">Pharmacie</h1>
+    <p class="adresse" id="adresse-pharmacie"></p>
+    <span class="badge-maj" id="badge-date">Chargement…</span>
   </div>
+</header>
 
-  <main>
-    <div class="section-label">Promotions en cours</div>
-    <div class="promo-grid" id="promo-grid">
+<div class="horaires-strip" id="horaires-strip"></div>
+
+<!-- Fil d'ariane (visible seulement sur page promos) -->
+<div class="breadcrumb" id="breadcrumb">
+  <button class="retour" onclick="afficherLabos()">← Laboratoires</button>
+  <span class="sep">›</span>
+  <span id="breadcrumb-labo"></span>
+</div>
+
+<main>
+  <!-- PAGE 1 : Liste des laboratoires -->
+  <div id="page-labos">
+    <div class="section-label">Laboratoires en promotion</div>
+    <div class="labo-grid" id="labo-grid">
       <div class="etat">
         <div class="spinner"></div>
-        <p>Chargement des promotions…</p>
+        <p>Chargement…</p>
       </div>
     </div>
-  </main>
+  </div>
 
-  <footer>
-    <p id="footer-tel"></p>
-    <p>Les prix s'entendent TTC. Offres valables dans la limite des stocks disponibles.</p>
-  </footer>
-  <p class="mention">Page générée automatiquement depuis Google Sheets</p>
+  <!-- PAGE 2 : Promos d'un labo -->
+  <div id="page-promos">
+    <div class="section-label" id="titre-labo">Promotions</div>
+    <div class="promo-grid" id="promo-grid"></div>
+  </div>
+</main>
+
+<footer>
+  <p id="footer-tel"></p>
+  <p>Les prix s'entendent TTC. Offres valables dans la limite des stocks disponibles.</p>
+</footer>
+<p class="mention">Page générée automatiquement depuis Google Sheets</p>
 
 <script>
-// ════════════════════════════════════════════════
-//  CONFIGURATION — modifiez ici si besoin
-// ════════════════════════════════════════════════
+// ════════════════════════════════
+//  CONFIGURATION
+// ════════════════════════════════
 const CONFIG = {
-  // Votre URL Google Sheets (CSV public)
   sheetURL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWSimqPdKEUc2PWlHNK13ftd243rw5pAyn6pmndMksUAAUSAtbl6Lq3lkzymvUJssZxmEG69OUm7WL/pub?gid=0&single=true&output=csv",
-
-  // Informations de votre pharmacie (à personnaliser)
-  nomPharmacie:  "Pharmacie du Centre",
-  adresse:       "12 rue de la Paix — Épinal",
-  telephone:     "03 29 XX XX XX",
-  horaires:      "Lun – Sam  |  8h30 – 19h30",
+  nomPharmacie: "Pharmacie du Centre",
+  adresse:      "12 rue de la Paix — Épinal",
+  telephone:    "03 29 XX XX XX",
+  horaires:     "Lun – Sam  |  8h30 – 19h30",
 };
-// ════════════════════════════════════════════════
 
-// Remplissage des infos statiques
-document.getElementById("nom-pharmacie").textContent    = CONFIG.nomPharmacie;
+// Palette de couleurs pour les cartes laboratoires
+const PALETTE = [
+  { bg:"#1a8a5a", txt:"white" },
+  { bg:"#2563eb", txt:"white" },
+  { bg:"#7c3aed", txt:"white" },
+  { bg:"#dc2626", txt:"white" },
+  { bg:"#d97706", txt:"white" },
+  { bg:"#0891b2", txt:"white" },
+  { bg:"#be185d", txt:"white" },
+  { bg:"#065f46", txt:"white" },
+];
+
+// Emojis associés aux noms de labos courants (sinon 🏥 par défaut)
+const LABO_ICONS = {
+  sanofi:"💊", boiron:"🌿", urgo:"🩹", cooper:"⚗️",
+  bayer:"🔬", pfizer:"💉", roche:"🧬", johnson:"🧴",
+  vichy:"✨", avene:"💧", bioderma:"🌸", uriage:"🌊",
+  pharmavie:"🌱", biogaran:"💊", teva:"⚕️", mylan:"💊",
+};
+
+// Emoji par défaut selon le nom du labo
+function emojiLabo(nom) {
+  const n = nom.toLowerCase();
+  for (const [key, emoji] of Object.entries(LABO_ICONS)) {
+    if (n.includes(key)) return emoji;
+  }
+  return "🏥";
+}
+
+// ── Infos statiques ──
+document.getElementById("nom-pharmacie").textContent     = CONFIG.nomPharmacie;
 document.getElementById("adresse-pharmacie").textContent = CONFIG.adresse;
-document.getElementById("horaires-strip").textContent   = CONFIG.horaires;
+document.getElementById("horaires-strip").textContent    = CONFIG.horaires;
 if (CONFIG.telephone) {
   document.getElementById("footer-tel").innerHTML =
     `📞 <strong>${CONFIG.telephone}</strong>`;
 }
-
-// Date de mise à jour
-const maintenant = new Date();
-const dateStr = maintenant.toLocaleDateString("fr-FR", {
-  day: "numeric", month: "long", year: "numeric"
-});
+const dateStr = new Date().toLocaleDateString("fr-FR",
+  { day:"numeric", month:"long", year:"numeric" });
 document.getElementById("badge-date").textContent = `Mis à jour le ${dateStr}`;
 
-// ── Parsing CSV simple (gère les guillemets) ──
+// ── Parsing CSV ──
 function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-
   const headers = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-
   return lines.slice(1)
     .map(line => {
-      const values = splitCSVLine(line);
+      const vals = splitCSVLine(line);
       const obj = {};
-      headers.forEach((h, i) => { obj[h] = (values[i] || "").trim(); });
+      headers.forEach((h, i) => { obj[h] = (vals[i] || "").trim(); });
       return obj;
     })
-    .filter(row => row.nom && row.nom.length > 0); // ignore lignes vides
+    .filter(r => r.nom && r.nom.length > 0);
 }
 
 function splitCSVLine(line) {
-  const result = [];
-  let current = "";
-  let inQuotes = false;
+  const result = []; let cur = ""; let inQ = false;
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
-    if (c === '"') {
-      inQuotes = !inQuotes;
-    } else if (c === "," && !inQuotes) {
-      result.push(current);
-      current = "";
-    } else {
-      current += c;
-    }
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ""; }
+    else { cur += c; }
   }
-  result.push(current);
+  result.push(cur);
   return result;
 }
 
-// ── Calcul du % de réduction ──
-function calcRemise(prixPromo, prixAncien) {
-  const p = parseFloat(String(prixPromo).replace(",", "."));
-  const a = parseFloat(String(prixAncien).replace(",", "."));
-  if (!p || !a || a <= p) return null;
-  return Math.round((1 - p / a) * 100);
+// ── Utilitaires ──
+function calcRemise(p, a) {
+  const pf = parseFloat(String(p).replace(",","."));
+  const af = parseFloat(String(a).replace(",","."));
+  if (!pf || !af || af <= pf) return null;
+  return Math.round((1 - pf/af)*100);
 }
-
-// ── Formatage prix ──
 function formatPrix(val) {
-  const n = parseFloat(String(val).replace(",", "."));
+  const n = parseFloat(String(val).replace(",","."));
   if (isNaN(n)) return val;
-  return n.toFixed(2).replace(".", ",") + " €";
+  return n.toFixed(2).replace(".",",") + " €";
 }
 
-// ── Conversion lien Google Drive → lien direct ──
-// Recherche photo via le NOM du produit
-// Strategie : Open Food Facts par nom, puis icone generique par categorie
-async function photoDepuisNom(nom, categorie) {
-  if (!nom || nom.trim() === "") return null;
-
-  // Tentative 1 : Open Food Facts recherche par nom
-  try {
-    const query = encodeURIComponent(nom.trim());
-    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=5`;
-    const r = await fetch(url);
-    if (r.ok) {
-      const data = await r.json();
-      if (data.products && data.products.length > 0) {
-        for (const p of data.products) {
-          const img = p.image_front_url || p.image_url;
-          if (img) return img;
-        }
-      }
-    }
-  } catch (e) { /* essai suivant */ }
-
-  // Tentative 2 : Open Beauty Facts recherche par nom
-  try {
-    const query = encodeURIComponent(nom.trim());
-    const url = `https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=5`;
-    const r = await fetch(url);
-    if (r.ok) {
-      const data = await r.json();
-      if (data.products && data.products.length > 0) {
-        for (const p of data.products) {
-          const img = p.image_front_url || p.image_url;
-          if (img) return img;
-        }
-      }
-    }
-  } catch (e) { /* echec silencieux */ }
-
-  return null;
-}
-
-// Construction d'une carte (async pour charger la photo)
-async function construireCarteHTML(promo) {
-  const remise = calcRemise(promo.prix_promo, promo.prix_ancien);
-
-  // Photo automatique via le nom du produit
-  let lienPhoto = await photoDepuisNom(promo.nom, promo.categorie);
-
-  // Bloc image
-  let imgHTML;
-  if (lienPhoto) {
-    imgHTML = `
-      <div class="card-img">
-        <img
-          src="${lienPhoto}"
-          alt="${promo.nom}"
-          loading="lazy"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
-        <div class="card-img-placeholder" style="display:none;">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <span>Photo produit</span>
-        </div>
-        ${remise ? `<span class="badge-remise">-${remise}%</span>` : ""}
-      </div>`;
-  } else {
-    imgHTML = `
-      <div class="card-img">
-        <div class="card-img-placeholder">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          <span>Photo a venir</span>
-        </div>
-        ${remise ? `<span class="badge-remise">-${remise}%</span>` : ""}
-      </div>`;
-  }
-
-  // Bloc prix
-  let prixHTML = "";
-  if (promo.prix_promo) {
-    prixHTML = `
-      <div class="card-prix">
-        <div>
-          <div class="prix-promo">${formatPrix(promo.prix_promo)}</div>
-          ${promo.prix_ancien ? `<div class="prix-ancien">${formatPrix(promo.prix_ancien)}</div>` : ""}
-        </div>
-      </div>`;
-  }
-
-  // Date de fin
-  let expiryHTML = promo.date_fin
-    ? `<div class="card-expiry">Jusqu'au ${promo.date_fin}</div>`
-    : "";
-
-  return `
-    <div class="card">
-      ${imgHTML}
-      <div class="card-body">
-        ${promo.categorie ? `<span class="card-cat">${promo.categorie}</span>` : ""}
-        <div class="card-nom">${promo.nom}</div>
-        ${promo.description ? `<div class="card-desc">${promo.description}</div>` : ""}
-        ${prixHTML}
-        ${expiryHTML}
-      </div>
-    </div>`;
-}
-
-// Double proxy avec fallback automatique
+// ── Fetch avec double proxy ──
 async function fetchAvecFallback(url) {
   const urlAntiCache = url + "&t=" + Date.now();
   const proxies = [
@@ -550,43 +405,164 @@ async function fetchAvecFallback(url) {
     try {
       const r = await fetch(proxy);
       if (r.ok) return await r.text();
-    } catch (e) { /* essai suivant */ }
+    } catch(e) {}
   }
-  throw new Error("Tous les proxies ont echoue");
+  throw new Error("Proxies inaccessibles");
 }
 
-// Chargement & affichage
-async function chargerPromos() {
-  const grid = document.getElementById("promo-grid");
+// ── Recherche photo par nom ──
+async function photoDepuisNom(nom) {
+  if (!nom) return null;
+  try {
+    const q = encodeURIComponent(nom.trim());
+    const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${q}&search_simple=1&action=process&json=1&page_size=5`);
+    if (r.ok) {
+      const data = await r.json();
+      if (data.products) {
+        for (const p of data.products) {
+          const img = p.image_front_url || p.image_url;
+          if (img) return img;
+        }
+      }
+    }
+  } catch(e) {}
+  try {
+    const q = encodeURIComponent(nom.trim());
+    const r = await fetch(`https://world.openbeautyfacts.org/cgi/search.pl?search_terms=${q}&search_simple=1&action=process&json=1&page_size=5`);
+    if (r.ok) {
+      const data = await r.json();
+      if (data.products) {
+        for (const p of data.products) {
+          const img = p.image_front_url || p.image_url;
+          if (img) return img;
+        }
+      }
+    }
+  } catch(e) {}
+  return null;
+}
 
+// ── Données globales ──
+let toutesPromos = [];
+let labosData = {}; // { nomLabo: { couleur, promos[] } }
+
+// ── Construction carte promo ──
+async function construireCarteHTML(promo, couleur) {
+  const remise = calcRemise(promo.prix_promo, promo.prix_ancien);
+  const lienPhoto = await photoDepuisNom(promo.nom);
+
+  const imgHTML = lienPhoto ? `
+    <div class="card-img">
+      <img src="${lienPhoto}" alt="${promo.nom}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="card-img-placeholder" style="display:none;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>Photo à venir</span>
+      </div>
+      ${remise ? `<span class="badge-remise">-${remise}%</span>` : ""}
+    </div>` : `
+    <div class="card-img">
+      <div class="card-img-placeholder">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>Photo à venir</span>
+      </div>
+      ${remise ? `<span class="badge-remise">-${remise}%</span>` : ""}
+    </div>`;
+
+  const prixHTML = promo.prix_promo ? `
+    <div class="card-prix">
+      <div>
+        <div class="prix-promo">${formatPrix(promo.prix_promo)}</div>
+        ${promo.prix_ancien ? `<div class="prix-ancien">${formatPrix(promo.prix_ancien)}</div>` : ""}
+      </div>
+    </div>` : "";
+
+  return `
+    <div class="card">
+      ${imgHTML}
+      <div class="card-body">
+        <span class="card-labo-badge" style="background:${couleur}">${promo.laboratoire || ""}</span>
+        <div class="card-nom">${promo.nom}</div>
+        ${promo.description ? `<div class="card-desc">${promo.description}</div>` : ""}
+        ${prixHTML}
+        ${promo.date_fin ? `<div class="card-expiry">Jusqu'au ${promo.date_fin}</div>` : ""}
+      </div>
+    </div>`;
+}
+
+// ── Afficher page laboratoires ──
+function afficherLabos() {
+  document.getElementById("page-labos").style.display  = "block";
+  document.getElementById("page-promos").style.display = "none";
+  document.getElementById("breadcrumb").classList.remove("visible");
+  window.scrollTo(0,0);
+}
+
+// ── Afficher promos d'un labo ──
+async function afficherPromos(nomLabo) {
+  document.getElementById("page-labos").style.display  = "none";
+  document.getElementById("page-promos").style.display = "block";
+  document.getElementById("breadcrumb").classList.add("visible");
+  document.getElementById("breadcrumb-labo").textContent = nomLabo;
+  document.getElementById("titre-labo").textContent = `Promos ${nomLabo}`;
+  window.scrollTo(0,0);
+
+  const grid = document.getElementById("promo-grid");
+  grid.innerHTML = `<div class="etat"><div class="spinner"></div><p>Chargement des promotions…</p></div>`;
+
+  const labo = labosData[nomLabo];
+  const cartes = await Promise.all(labo.promos.map(p => construireCarteHTML(p, labo.couleur)));
+  grid.innerHTML = cartes.join("");
+}
+
+// ── Chargement principal ──
+async function charger() {
+  const laboGrid = document.getElementById("labo-grid");
   try {
     const text = await fetchAvecFallback(CONFIG.sheetURL);
-    const promos = parseCSV(text);
+    toutesPromos = parseCSV(text);
 
-    if (promos.length === 0) {
-      grid.innerHTML = `
-        <div class="etat">
-          <div class="icon">🛒</div>
-          <p>Aucune promotion en cours.<br>Revenez bientôt !</p>
-        </div>`;
+    if (toutesPromos.length === 0) {
+      laboGrid.innerHTML = `<div class="etat"><div class="icon">🛒</div><p>Aucune promotion en cours.</p></div>`;
       return;
     }
 
-    const cartes = await Promise.all(promos.map(p => construireCarteHTML(p)));
-    grid.innerHTML = cartes.join("");
+    // Grouper par laboratoire
+    labosData = {};
+    toutesPromos.forEach(p => {
+      const labo = p.laboratoire || "Autre";
+      if (!labosData[labo]) labosData[labo] = { promos: [] };
+      labosData[labo].promos.push(p);
+    });
 
-  } catch (err) {
-    console.error("Erreur chargement promos :", err);
-    grid.innerHTML = `
-      <div class="etat">
-        <div class="icon">⚠️</div>
-        <p>Impossible de charger les promotions.<br>Vérifiez votre connexion et réessayez.</p>
-      </div>`;
+    // Assigner une couleur à chaque labo
+    Object.keys(labosData).forEach((nom, i) => {
+      labosData[nom].couleur = PALETTE[i % PALETTE.length].bg;
+    });
+
+    // Afficher les cartes laboratoires
+    laboGrid.innerHTML = Object.entries(labosData).map(([nom, data]) => `
+      <button class="labo-card" style="background:linear-gradient(135deg, ${data.couleur}ee, ${data.couleur}bb)"
+        onclick="afficherPromos('${nom.replace(/'/g,"\\'")}')">
+        <div class="labo-icon">${emojiLabo(nom)}</div>
+        <div class="labo-nom">${nom}</div>
+        <span class="labo-count">${data.promos.length} promo${data.promos.length > 1 ? "s" : ""}</span>
+      </button>`).join("");
+
+  } catch(err) {
+    laboGrid.innerHTML = `<div class="etat"><div class="icon">⚠️</div><p>Impossible de charger les données.<br>Vérifiez votre connexion.</p></div>`;
   }
 }
 
-// Lancement
-chargerPromos();
+charger();
 </script>
 </body>
 </html>
